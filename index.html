@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+    <title>Beck Depression Inventory</title>
+    <style>
+        @import url(http://fonts.googleapis.com/earlyaccess/droidarabickufi.css);
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #topContainer {
+            display: flex;
+            align-items: center;
+            align-content: center;
+            flex-direction: column;
+        }
+
+        #question-container {
+            max-width: 1000px;
+            width: 100%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: right;
+            padding-left: 100px;
+            padding-right: 100px;
+        }
+
+        .question {
+            font-family: 'Amiri', serif;
+            margin-bottom: 20px;
+        }
+
+        .answer-input {
+            width: 100px;
+            font-size: 18px;
+            /* Adjust the font size as needed */
+            border: 2px solid black;
+            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            text-align: center;
+
+        }
+
+        #result-container {
+            margin-top: 20px;
+        }
+
+        #questions button {
+            float: right;
+            background-color: #4caf50;
+            width: 200px;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+            /* Add margin for spacing */
+        }
+
+        #questions button:hover {
+            background-color: #45a049;
+        }
+
+        #MainHeading {
+            color: #333;
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        #SubHeading {
+            color: #555;
+            font-size: 25px;
+            margin-bottom: 20px;
+        }
+
+        .ArbText01 {
+            font-family: adobe arabic;
+            font-size: 100px;
+        }
+
+        .droid-arabic-kufi {
+            font-family: 'Droid Arabic Kufi', serif;
+        }
+
+        .amiri_font {
+            font-family: 'Amiri', serif;
+        }
+
+        /* Define a class for the hr element */
+        .separation-line {
+            border: 1px solid #3a1c1c;
+            margin: 10px 0;
+            /* width: 500px; */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="question-container">
+        <div id="topContainer">
+            <h1 class="droid-arabic-kufi" id="MainHeading">مرحبًا بكم في مخزون بيك للاكتئاب (BDI)</h1>
+            <p id="SubHeading">أجب عن الأسئلة التالية بمقياس من 0 إلى 3.</p>
+        </div>
+
+
+        <div id="questions"></div>
+
+        <div id="result-container">
+            <p id="total-score"></p>
+            <p id="interpretation"></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const questionList = [
+                "لا أشعر بالحزن.\nأشعر بالحزن.\nأنا حزين طوال الوقت ولا أستطيع التخلص منه.\nأنا حزين للغاية وغير سعيد لدرجة أنني لا أستطيع تحمل ذلك.",
+                "لا أشعر بالإحباط بشكل خاص بشأن المستقبل.\n أشعر بالإحباط بشأن المستقبل.\n أشعر أنه ليس لدي ما أتطلع إليه.\n أشعر أن المستقبل ميؤوس منه وأن الأمور لا يمكن أن تتحسن.",
+                " لا أشعر بالفشل.\n أشعر أنني فشلت أكثر من أي شخص عادي.\n عندما أنظر إلى حياتي، كل ما أستطيع رؤيته هو الكثير من حالات الفشل. \n أشعر بأنني شخص فاشل تمامًا.",
+                " أشعر بالرضا عن الأشياء كما اعتدت من قبل.\n لم أعد أستمتع بالأشياء بالطريقة التي اعتدت عليها.\n لم أعد أشعر بالرضا الحقيقي عن أي شيء.\n أشعر بعدم الرضا أو الملل كل شئ.",
+                " لا أشعر بالذنب بشكل خاص.\n أشعر بالذنب في جزء كبير من الوقت.\nأشعر بالذنب معظم الوقت.\n أشعر بالذنب طوال الوقت.",
+                " لا أشعر أنني أعاقب.\n أشعر أنني قد أعاقب.\n أتوقع أن أعاقب.\nأشعر أنني أتعرض للعقاب.",
+                " لا أشعر بخيبة الأمل في نفسي.\n أشعر بخيبة الأمل في نفسي.\n أشعر بالاشمئزاز من نفسي.\n أنا أكره نفسي.",
+                "لا أشعر أنني أسوأ من أي شخص آخر.\n أنا أنتقد نفسي بسبب نقاط ضعفي أو أخطائي.\n ألوم نفسي طوال الوقت على أخطائي.\n ألوم نفسي على كل شيء سيء يحدث . ",
+                " ليس لدي أي أفكار لقتل نفسي.\n تراودني أفكار لقتل نفسي، لكنني لن أنفذها.\n أود أن أقتل نفسي.\n سأقتل نفسي إذا أتيحت لي الفرصة . ",
+                "لم أعد أبكي أكثر من المعتاد.\nأبكي الآن أكثر مما كنت أفعل من قبل.\n أبكي طوال الوقت الآن.\n كنت قادراً على البكاء، لكني الآن لا أستطيع البكاء حتى على الرغم من أنني أريد ذلك.",
+                "لم أعد منزعجًا من الأشياء أكثر من أي وقت مضى.\nأنا الآن منزعج قليلاً أكثر من المعتاد.\nأشعر بالانزعاج أو الانزعاج الشديد في كثير من الوقت.\nأشعر بالغضب طوال الوقت. ",
+                " لم أفقد الاهتمام بالأشخاص الآخرين.\n أصبح اهتمامي بالأشخاص أقل مما كنت عليه من قبل.\n لقد فقدت معظم اهتمامي بالأشخاص الآخرين.\n لقد فقدت كل اهتمامي بالآخرين الناس. ",
+                " أتخذ القرارات بأفضل ما أستطيع.\n أؤجل اتخاذ القرارات أكثر من المعتاد.\nأجد صعوبة أكبر في اتخاذ القرارات أكثر من المعتاد.\nلا أستطيع اتخاذ القرارات في الوقت المحدد كل شيء بعد الآن.",
+                "لم أعد أشعر بأنني أبدو أسوأ مما كنت عليه من قبل.\n أشعر بالقلق من أن أبدو كبير السن أو غير جذاب.\n أشعر أن هناك تغييرات دائمة في مظهري تجعلني أبدو غير جذاب.\n أنا أعتقد أنني أبدو قبيحة.",
+                "يمكنني العمل كما كان من قبل.\n يتطلب الأمر مجهودًا إضافيًا للبدء في القيام بشيء ما.\n يجب أن أضغط على نفسي بشدة لفعل أي شيء.\n لا أستطيع القيام بأي عمل على الإطلاق. ",
+                "أستطيع النوم جيدًا كالمعتاد.\n لم أعد أنام جيدًا كما اعتدت.\n أستيقظ مبكرًا بساعة أو ساعتين عن المعتاد وأجد صعوبة في العودة إلى النوم.\n أستيقظ استيقظت مبكرًا بعدة ساعات عما اعتدت عليه ولا أستطيع العودة إلى النوم",
+                "لم أعد أشعر بالتعب أكثر من المعتاد.\n أشعر بالتعب بسهولة أكبر من المعتاد.\n أشعر بالتعب من القيام بأي شيء تقريبًا.\n أنا متعب جدًا لدرجة أنني لا أستطيع فعل أي شيء.",
+                "شهيتي ليست أسوأ من المعتاد.\n شهيتي ليست جيدة كما كانت من قبل.\n شهيتي أسوأ بكثير الآن.\n ليس لدي شهية على الإطلاق بعد الآن. ",
+                "لم أفقد الكثير من الوزن، إن وجد، مؤخرًا.\nلقد فقدت أكثر من خمسة أرطال.\n لقد فقدت أكثر من عشرة أرطال.\n لقد فقدت أكثر من خمسة عشر رطلاً.",
+                "لم أعد أشعر بالقلق بشأن صحتي أكثر من المعتاد.\n أنا قلق بشأن المشاكل الجسدية مثل الأوجاع أو الآلام أو اضطراب المعدة أو الإمساك.\nأنا قلق للغاية بشأن المشاكل الجسدية ومن الصعب التفكير في أي شيء آخر. \n أنا قلق للغاية بشأن مشاكلي الجسدية لدرجة أنني لا أستطيع التفكير في أي شيء آخر. ",
+                "لم ألاحظ أي تغيير مؤخرًا في اهتمامي بالجنس.\nأصبحت أقل اهتمامًا بالجنس مما كنت عليه من قبل.\n لم أعد مهتمًا بالجنس تقريبًا.\n لقد فقدت الاهتمام بالجنس تمامًا."
+            ];
+
+            let questionScore = 0;
+
+            const questionsContainer = document.getElementById('questions');
+            const totalScoreElement = document.getElementById('total-score');
+            const interpretationElement = document.getElementById('interpretation');
+
+            function renderQuestion(index) {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+                const questionLines = questionList[index].split('\n');
+
+                questionLines.forEach((line, lineNumber) => {
+                    if (line.trim() !== '') {
+                        const lineElement = document.createElement('p');
+                        lineElement.innerHTML = `${line} <strong>(${lineNumber})</strong>`;
+                        questionDiv.appendChild(lineElement);
+                    }
+                });
+
+                const answerInput = document.createElement('input');
+                answerInput.type = 'number';
+                answerInput.classList.add('answer-input');
+                questionDiv.appendChild(answerInput);
+
+                // Add horizontal rule (separation line) after each question
+                const separationLine = document.createElement('hr');
+                separationLine.classList.add('separation-line'); // Add the class
+                questionsContainer.appendChild(questionDiv);
+                questionsContainer.appendChild(separationLine);
+            }
+
+
+            function calculateScore() {
+                const answerInputs = document.querySelectorAll('.answer-input');
+
+                questionScore = 0; // Reset the score to zero
+
+                answerInputs.forEach((answerInput) => {
+                    const answer = parseInt(answerInput.value);
+
+                    if (!isNaN(answer) && answer >= 0 && answer <= 3) {
+                        questionScore += answer;
+                    } else {
+                        alert('Please enter a valid integer between 0 and 3.');
+                        return;
+                    }
+                });
+
+                totalScoreElement.textContent = `مجموع النقاط: ${questionScore}`;
+                interpretationElement.textContent = interpretScore(questionScore);
+
+                // Disable the submit button after it is clicked
+                submitButton.disabled = true;
+            }
+
+
+            function interpretScore(score) {
+                if (1 <= score && score <= 10) {
+                    return "تعتبر هذه الصعود والهبوط طبيعية";
+                } else if (11 <= score && score <= 16) {
+                    return "اضطراب مزاجي خفيف";
+                } else if (17 <= score && score <= 20) {
+                    return "الاكتئاب السريري الحدودي";
+                } else if (21 <= score && score <= 30) {
+                    return "الاكتئاب المعتدل";
+                } else if (31 <= score && score <= 40) {
+                    return "اكتئاب حاد";
+                } else if (score > 40) {
+                    return "الاكتئاب الشديد";
+                } else {
+                    return "النتيجة غير صالحة";
+                }
+            }
+
+
+            // Render questions
+            for (let i = 0; i < questionList.length; i++) {
+                renderQuestion(i);
+            }
+
+            // Add submit button
+            const submitButton = document.createElement('button');
+            submitButton.textContent = ' النتيجة ';
+            submitButton.addEventListener('click', calculateScore);
+            questionsContainer.appendChild(submitButton);
+        });
+    </script>
+</body>
+
+</html>
